@@ -108,7 +108,7 @@ export default {
   methods: {
     goBack () {
       this.isLoading = false
-      this.$router.go(-1)
+      this.$router.push({path: '/employees'})
     }
   },
   mounted () {
