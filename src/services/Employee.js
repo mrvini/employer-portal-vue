@@ -71,9 +71,18 @@ class EmployeeManager {
    */
   delete (id = false) {
     if (!id) {
-      return Promise.reject(new ValidationError('Employee id is invalid in findById'))
+      return Promise.reject(new ValidationError('Employee id is invalid in delete'))
     }
-    return Promise.resolve(true)
+
+    return axios.delete(`${host}/employees/${id}`)
+      .then(response => {
+        return response.status
+      })
+      .catch(
+        e => {
+          throw e
+        }
+      )
   }
 
   /**

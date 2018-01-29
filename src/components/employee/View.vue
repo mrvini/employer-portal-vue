@@ -1,7 +1,7 @@
 <template>
   <div id='employee-view' >
       <md-progress-bar md-mode="indeterminate" v-if='isLoading'></md-progress-bar>
-      <form novalidate class="md-layout-row md-gutter" @submit.prevent="validateEmployee">
+      <form novalidate class="md-layout-row md-gutter">
      <md-card class="md-flex-50 md-flex-small-100">
        <md-card-header>
          <div class="md-title">View Employee</div>
@@ -10,20 +10,16 @@
        <md-card-content>
          <div class="md-layout-row md-layout-wrap md-gutter">
            <div class="md-flex md-flex-small-100">
-             <md-field :class="getValidationClass('firstName')">
+             <md-field>
                <label for="first-name">First Name</label>
                <md-input name="first-name" id="first-name" autocomplete="given-name" v-model="form.firstName" :disabled="isView" />
-               <span class="md-error" v-if="!$v.form.firstName.required">The first name is required</span>
-               <span class="md-error" v-else-if="!$v.form.firstName.minlength">Invalid first name</span>
              </md-field>
            </div>
 
            <div class="md-flex md-flex-small-100">
-             <md-field :class="getValidationClass('lastName')">
+             <md-field>
                <label for="last-name">Last Name</label>
                <md-input name="last-name" id="last-name" autocomplete="family-name" v-model="form.lastName" :disabled="isView" />
-               <span class="md-error" v-if="!$v.form.lastName.required">The last name is required</span>
-               <span class="md-error" v-else-if="!$v.form.lastName.minlength">Invalid last name</span>
              </md-field>
            </div>
          </div>
@@ -41,45 +37,38 @@
            </div>
 
            <div class="md-flex md-flex-small-100">
-               <md-field :class="getValidationClass('email')">
+               <md-field>
                  <label for="email">Email</label>
                  <md-input type="email" name="email" id="email" autocomplete="email" v-model="form.email" :disabled="isView" />
-                 <span class="md-error" v-if="!$v.form.email.required">The email is required</span>
-                 <span class="md-error" v-else-if="!$v.form.email.email">Invalid email</span>
                </md-field>
            </div>
 
            <div class="md-flex md-flex-small-100">
-               <md-field :class="getValidationClass('title')">
+               <md-field >
                  <label for="title">Title</label>
                  <md-input type="title" name="title" id="title" autocomplete="title" v-model="form.title" :disabled="isView" />
-                 <span class="md-error" v-if="!$v.form.title.required">The title is required</span>
-                 <span class="md-error" v-else-if="!$v.form.title.minlength">Invalid Title</span>
                </md-field>
            </div>
 
            <div class="md-flex md-flex-small-100">
-               <md-field :class="getValidationClass('phone')">
+               <md-field >
                  <label for="phone">Phone</label>
                  <md-input type="phone" name="phone" id="phone" autocomplete="phone" v-model="form.phone" :disabled="isView" />
-                 <span class="md-error" v-if="!$v.form.phone.required">The Phone is required</span>
-                 <span class="md-error" v-else-if="!$v.form.phone.minlength">Invalid Phone</span>
                </md-field>
            </div>
 
          </div>
 
-           <md-field :class="getValidationClass('dateOfBirth')">
-             <label for="dateOfBirth">Date of Birth</label>
-              <md-datepicker v-model="form.dateOfBirth" :md-open-on-focus="false" :disabled="isView" />
-              <span class="md-error" v-if="!$v.form.dateOfBirth.required">The Date of Birth is required</span>
-           </md-field>
+         <label for="dateOfBirth">Date of Birth</label>
+          <md-datepicker v-model="form.dateOfBirth" :md-open-on-focus="false" :disabled="isView" />
 
-           <md-field :class="getValidationClass('employmentStartDate')">
-             <label for="employmentStartDate">Employement Start Date</label>
-              <md-datepicker v-model="form.employmentStartDate" :md-open-on-focus="false" :disabled="isView" />
-              <span class="md-error" v-if="!$v.form.employmentStartDate.required">The Employment start date is required</span>
-           </md-field>
+          <label for="employmentStartDate">Employement Start Date</label>
+           <md-datepicker v-model="form.employmentStartDate" :md-open-on-focus="false" :disabled="isView" />
+
+
+           <md-card-actions>
+             <md-button type="submit" class="md-primary" @click='goBack'>Cancel</md-button>
+           </md-card-actions>
        </md-card-content>
      </md-card>
 
@@ -118,71 +107,11 @@ export default {
     isView: true,
     lastEmployee: null
   }),
-  validations: {
-    form: {
-      firstName: {
-        required,
-        minLength: minLength(3)
-      },
-      lastName: {
-        required,
-        minLength: minLength(3)
-      },
-      dateOfBirth: {
-        required
-      },
-      email: {
-        required,
-        email
-      },
-      employmentStartDate: {
-        required
-      },
-      phone: {
-        required,
-        minLength: minLength(10)
-      },
-      title: {
-        required,
-        minLength: minLength(3)
-      }
-    }
-  },
   methods: {
-    getValidationClass (fieldName) {
-      const field = this.$v.form[fieldName]
-      if (field) {
-        return {
-          'md-invalid': field.$invalid && field.$dirty
-        }
+      goBack() {
+          this.isLoading = false
+          this.$router.go(-1)
       }
-    },
-    clearForm () {
-      this.$v.$reset()
-      this.form.firstName = null
-      this.form.lastName = null
-      this.form.age = null
-      this.form.gender = null
-      this.form.email = null
-    },
-    saveEmployee () {
-      this.isLoading = true
-
-      // Instead of this timeout, here you can call your API
-      window.setTimeout(() => {
-        this.lastEmployee = `${this.form.firstName} ${this.form.lastName}`
-        this.employeeSaved = true
-        this.isLoading = false
-        this.clearForm()
-      }, 1500)
-    },
-    validateEmployee () {
-      this.$v.$touch()
-
-      if (!this.$v.$invalid) {
-        this.saveEmployee()
-      }
-    }
   },
   created () {
     const self = this

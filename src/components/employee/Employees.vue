@@ -29,9 +29,20 @@
              <md-button class="md-icon-button" :to="{path:'/employees/view', query: { id: item.id }}">
               <md-icon>visibility</md-icon>
             </md-button>
+            <md-button class="md-icon-button" @click='deleteEmployee(item)'>
+             <md-icon>delete_forever</md-icon>
+           </md-button>
           </md-table-cell>
         </md-table-row>
       </md-table>
+      <md-dialog-confirm
+          :md-active.sync="deleteDialogActive"
+          md-title="Dete Employee"
+          md-content="Are you sure you'd like to remove employee?"
+          md-confirm-text="Yes"
+          md-cancel-text="No"
+          @md-cancel="onCancelDelete"
+          @md-confirm="onConfirmDelete" />
       <div class='addEmployeeFab'>
           <md-button class="md-fab" :to="{path:'/employees/add'}">
             <md-icon>add</md-icon>
@@ -59,6 +70,8 @@ const searchByName = (items, term) => {
 export default {
   name: 'EmployeeList',
   data: () => ({
+    deleteDialogActive : false,
+    employeeToDelete : null,
     isLoading: true,
     search: null,
     searched: [],
@@ -76,23 +89,52 @@ export default {
     },
     updateEmployee (item) {
       this.$router.push({path: '/employees/update/', query: { id: item.id }})
+    },
+    deleteEmployee (item) {
+        this.deleteDialogActive = true;
+        this.employeeToDelete = item;
+    },
+    reloadEmlpoyees() {
+        const self = this
+        employeeService.findByCriteria()
+          .then(
+            (results) => {
+              self.searched = self.employees = results
+              self.isLoading = false
+            }
+          )
+          .catch(
+            (err) => {
+              self.isLoading = false
+            }
+          )
+    },
+    onConfirmDelete () {
+        const self = this
+        employeeService.delete(this.employeeToDelete.id)
+            .then(
+                (success) => {
+                    return self.reloadEmlpoyees()
+                }
+            )
+            .catch(
+              (err) => {
+                console.log('This is the error', err) // display error dialog
+              }
+            )
+            .finaly(
+                () => {
+                    self.employeeToDelete = null
+                    self.isLoading = false
+                }
+            )
+    },
+    onCancelDelete () {
+        this.employeeToDelete = null
     }
   },
   created () {
-    const self = this
-    employeeService.findByCriteria()
-      .then(
-        (results) => {
-          self.searched = self.employees = results
-          self.isLoading = false
-        }
-      )
-      .catch(
-        (err) => {
-          alert('This is the error', err) // display error dialog
-          self.isLoading = false
-        }
-      )
+      this.reloadEmlpoyees();
   },
   filters: {
     formatDate: (date) => {

@@ -180,12 +180,14 @@ export default {
         this.$router.go(-1)
     },
     clearForm () {
-      this.$v.$reset()
-      this.form.firstName = null
-      this.form.lastName = null
-      this.form.age = null
-      this.form.gender = null
-      this.form.email = null
+        this.$v.$reset()
+        this.form.firstName = null
+        this.form.lastName = null
+        this.form.gender = null
+        this.form.email = null
+        this.form.phone = null
+        this.form.employmentStartDate = null
+        this.form.dateOfBirth = null
     },
     saveEmployee () {
       this.isLoading = true
@@ -197,15 +199,18 @@ export default {
             this.form = updatedEmployee;
             this.lastEmployee = `${this.form.firstName} ${this.form.lastName}`
             this.employeeSaved = true
-            this.isLoading = false
           }
         )
         .catch(
           (err) => {
             this.isError = true
             alert('This is the error', err) // display error dialog
-            self.isLoading = false
           }
+        )
+        .finally(
+            () => {
+                this.isLoading = false
+            }
         )
     },
     processEmployee () {

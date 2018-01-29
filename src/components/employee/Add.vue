@@ -93,7 +93,7 @@
        </md-card-actions>
      </md-card>
 
-     <md-snackbar :md-active.sync="employeeSaved">The user {{ lastEmployee }} was saved with success!</md-snackbar>
+     <md-snackbar :md-active.sync="employeeSaved">The employee {{ lastEmployee }} was saved with success!</md-snackbar>
    </form>
   </div>
 </template>
@@ -176,7 +176,6 @@ export default {
       this.$v.$reset()
       this.form.firstName = null
       this.form.lastName = null
-      this.form.age = null
       this.form.gender = null
       this.form.email = null
       this.form.phone = null
