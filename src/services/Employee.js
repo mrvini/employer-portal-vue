@@ -6,12 +6,12 @@ import axios from 'axios'
 import EmployeeModel from '../models/Employee'
 import ValidationError from '../errors/ValidationError'
 
-const host = 'http://localhost:3000'
+const host = process.env.API_ENDPOINT// 'http://localhost:3000'
 /**
  * Employee Manager service
  * @class module:services.EmployeeManager
  */
-class EmployeeManager {
+export default class EmployeeManager {
   /**
    * @description create employee method
    * @method module:services.EmployeeManager.create
@@ -27,7 +27,8 @@ class EmployeeManager {
       `${host}/employees`,
       employee)
       .then(response => {
-        console.log('i am getting response', response)
+        // reload employee model and return;
+        return employee.load(response.data)
       })
       .catch(
         e => {
@@ -124,7 +125,6 @@ class EmployeeManager {
     return axios.get(`${host}/employees`)
       .then(response => {
         // JSON responses are automatically parsed.
-        console.log(response.data)
         response.data.forEach(
           (el) => {
             const employee = new EmployeeModel()
@@ -139,5 +139,3 @@ class EmployeeManager {
       })
   }
 }
-
-export default EmployeeManager

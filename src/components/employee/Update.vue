@@ -93,7 +93,7 @@
      </md-card>
 
      <md-snackbar :md-active.sync="employeeSaved">The user {{ lastEmployee }} was saved with success!</md-snackbar>
-     <error :error='error'></error>
+     <error :error='error' ref="errorAlert"></error>
    </form>
   </div>
 </template>
@@ -106,16 +106,16 @@ import {
   email,
   minLength
 } from 'vuelidate/lib/validators'
-import Error from '../alert/Error'
+import ErrorAlert from '../alert/Error'
 
 // import employee services
 import EmployeeService from '../../services/Employee'
 import EmployeeModel from '../../models/Employee'
 const employeeService = new EmployeeService()
-Vue.component('error', Error)
+Vue.component('error', ErrorAlert)
 export default {
   name: 'EmployeeUpdate',
-  componets: [Error],
+  componets: [ErrorAlert],
   mixins: [validationMixin],
   data: () => ({
     form: {
@@ -132,8 +132,7 @@ export default {
     employeeSaved: false,
     isLoading: false,
     lastEmployee: null,
-    isError: false,
-    error: ''
+    error: {}
   }),
   validations: {
     form: {
@@ -174,20 +173,20 @@ export default {
         }
       }
     },
-    goBack() {
-        this.isLoading = false
-        this.clearForm()
-        this.$router.go(-1)
+    goBack () {
+      this.isLoading = false
+      this.clearForm()
+      this.$router.go(-1)
     },
     clearForm () {
-        this.$v.$reset()
-        this.form.firstName = null
-        this.form.lastName = null
-        this.form.gender = null
-        this.form.email = null
-        this.form.phone = null
-        this.form.employmentStartDate = null
-        this.form.dateOfBirth = null
+      this.$v.$reset()
+      this.form.firstName = null
+      this.form.lastName = null
+      this.form.gender = null
+      this.form.email = null
+      this.form.phone = null
+      this.form.employmentStartDate = null
+      this.form.dateOfBirth = null
     },
     saveEmployee () {
       this.isLoading = true
@@ -196,21 +195,18 @@ export default {
       employeeService.update(employee)
         .then(
           (updatedEmployee) => {
-            this.form = updatedEmployee;
+            this.form = updatedEmployee
             this.lastEmployee = `${this.form.firstName} ${this.form.lastName}`
             this.employeeSaved = true
+            this.isLoading = false
           }
         )
         .catch(
           (err) => {
-            this.isError = true
-            alert('This is the error', err) // display error dialog
+            this.error = err
+            this.$refs.errorAlert.isActive = true
+            this.isLoading = false
           }
-        )
-        .finally(
-            () => {
-                this.isLoading = false
-            }
         )
     },
     processEmployee () {
@@ -221,23 +217,21 @@ export default {
       }
     }
   },
-  created () {
+  mounted () {
     // load employee first thing
-    const self = this
     const employeeId = this.$route.query.id
     employeeService.findById(employeeId)
       .then(
         (result) => {
-          console.log(result);
-          self.form = result
+          this.form = result
           self.isLoading = false
         }
       )
       .catch(
         (err) => {
-          this.isError = true
           this.error = err
-          self.isLoading = false
+          this.$refs.errorAlert.isActive = true
+          this.isLoading = false
         }
       )
   }

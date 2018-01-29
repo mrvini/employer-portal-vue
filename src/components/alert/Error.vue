@@ -1,8 +1,8 @@
 <template>
     <div id='alert-error' >
         <md-dialog-alert
-            :md-active.sync="error.id"
-            md-title="Error!"
+            :md-active.sync="isActive"
+            md-title="Application Error!"
             :md-content="error.message" />
     </div>
 </template>
@@ -13,7 +13,10 @@ export default {
   props: {
     error: {default: {}}
   },
-  methods: {
+  data () {
+    return {
+      isActive: false
+    }
   }
 }
 </script>

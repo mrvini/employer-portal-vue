@@ -65,30 +65,27 @@
           <label for="employmentStartDate">Employement Start Date</label>
            <md-datepicker v-model="form.employmentStartDate" :md-open-on-focus="false" :disabled="isView" />
 
-
            <md-card-actions>
              <md-button type="submit" class="md-primary" @click='goBack'>Cancel</md-button>
            </md-card-actions>
        </md-card-content>
      </md-card>
-
+     <error :error='error' ref="errorAlert"></error>
    </form>
   </div>
 </template>
 
 <script>
 import { validationMixin } from 'vuelidate'
-import {
-  required,
-  email,
-  minLength
-} from 'vuelidate/lib/validators'
+import ErrorAlert from '../alert/Error'
+
 // import employee services
 import EmployeeService from '../../services/Employee'
 const employeeService = new EmployeeService()
 
 export default {
   name: 'EmployeeView',
+  componets: [ErrorAlert],
   mixins: [validationMixin],
   data: () => ({
     form: {
@@ -105,29 +102,29 @@ export default {
     employeeSaved: false,
     isLoading: false,
     isView: true,
-    lastEmployee: null
+    lastEmployee: null,
+    error: {}
   }),
   methods: {
-      goBack() {
-          this.isLoading = false
-          this.$router.go(-1)
-      }
+    goBack () {
+      this.isLoading = false
+      this.$router.go(-1)
+    }
   },
-  created () {
-    const self = this
+  mounted () {
     const employeeId = this.$route.query.id
     employeeService.findById(employeeId)
       .then(
         (result) => {
-          self.form = result
-          self.isLoading = false
+          this.form = result
+          this.isLoading = false
         }
       )
       .catch(
         (err) => {
-          console.log(err)
-          alert('This is the error', err) // display error dialog
-          self.isLoading = false
+          this.error = err
+          this.$refs.errorAlert.isActive = true
+          this.isLoading = false
         }
       )
   }

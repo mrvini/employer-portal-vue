@@ -94,6 +94,8 @@
      </md-card>
 
      <md-snackbar :md-active.sync="employeeSaved">The employee {{ lastEmployee }} was saved with success!</md-snackbar>
+     <error :error='error' ref="errorAlert"></error>
+
    </form>
   </div>
 </template>
@@ -105,12 +107,14 @@ import {
   email,
   minLength
 } from 'vuelidate/lib/validators'
+import ErrorAlert from '../alert/Error'
 // import employee services
 import EmployeeService from '../../services/Employee'
 import EmployeeModel from '../../models/Employee'
 const employeeService = new EmployeeService()
 export default {
   name: 'EmployeeAdd',
+  componets: [ErrorAlert],
   mixins: [validationMixin],
   data: () => ({
     form: {
@@ -126,7 +130,8 @@ export default {
     },
     employeeSaved: false,
     isLoading: false,
-    lastEmployee: null
+    lastEmployee: null,
+    error: {}
   }),
   validations: {
     form: {
@@ -167,10 +172,10 @@ export default {
         }
       }
     },
-    goBack() {
-        this.isLoading = false
-        this.clearForm()
-        this.$router.go(-1)
+    goBack () {
+      this.isLoading = false
+      this.clearForm()
+      this.$router.go(-1)
     },
     clearForm () {
       this.$v.$reset()
@@ -186,7 +191,7 @@ export default {
       this.isLoading = true
       const employee = new EmployeeModel()
       employee.load(this.form)
-        .setCreatedAt();
+        .setCreatedAt()
       employeeService.create(employee)
         .then(
           () => {
@@ -198,9 +203,9 @@ export default {
         )
         .catch(
           (err) => {
-            console.log(err)
-            alert('This is the error', err) // display error dialog
-            self.isLoading = false
+            this.error = err
+            this.$refs.errorAlert.isActive = true
+            this.isLoading = false
           }
         )
     },
