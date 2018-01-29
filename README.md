@@ -69,3 +69,8 @@ docker push <custom-repo-url:5000>/employee-portal:1
 docker run -d --restart=always -p 7777:9000 --name www employee-portal
 ```
 now you'll be able to access application on ```http://localhost:7777```
+
+##TODO
+
+- Add Authentication using JSON web tokens
+- Style Components
