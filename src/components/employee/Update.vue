@@ -246,10 +246,4 @@ export default {
   right: 0;
   left: 0;
 }
-.md-app.md-overlap .md-app-content {
-    margin: 0;
-    position: relative;
-    z-index: 2;
-}
-
 </style>
