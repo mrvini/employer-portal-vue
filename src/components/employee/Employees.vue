@@ -69,7 +69,7 @@ const toLower = text => {
 const searchByName = (items, term) => {
   if (term) {
     return items.filter(
-        item => toLower(item.fullName).includes(toLower(term))
+      item => toLower(item.fullName).includes(toLower(term))
     )
   }
   return items

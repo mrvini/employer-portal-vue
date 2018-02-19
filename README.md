@@ -1,17 +1,18 @@
 # employer-portal
 
-> Employer Portal to view and manage employees
+- Employer Portal to view and manage employees
 
 ## Toolchain
-> Vue
-> Material Design for Vue in Beta
-> Express to serve the content
+- Vue
+- Material Design for Vue in Beta
+- Express to serve the content
 
 ## Dependencies
 This project is dependent on the API endpoint for employees
 API Could be set up from this repo: https://github.com/mrvini/employee-service-api. Please follow instructions in that repo to setup serverless endpoint for API
 
-## Build Setup
+
+## Build Scripts and Utilties
 
 ``` bash
 # install dependencies
@@ -35,6 +36,11 @@ npm test
 # run build and serve
 npm run serve
 ```
+
+## Development
+
+To develop, use ```npm run dev``` and open your browser with link http://localhost:8080
+
 ## configuration
 Employer portal requires API Endpoint, which could be configured separately in each of the configs
 - config/dev.env.js

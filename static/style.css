@@ -1,0 +1,5 @@
+.md-app.md-overlap .md-app-content {
+    margin: 0;
+    position: relative;
+    z-index: 2;
+}
